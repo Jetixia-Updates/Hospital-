@@ -1,38 +1,222 @@
-# Hospital Management System
+# نظام إدارة المستشفيات | Hospital Management System
 
-A full-stack hospital management system built with React, Express, Prisma, and PostgreSQL.
+<div dir="rtl">
 
-## Features
+## نظام إدارة مستشفيات متكامل وعالمي مخصص للمملكة العربية السعودية
 
-- **Role-Based Access Control**: 8 different user roles (Admin, Manager, Doctor, Nurse, Receptionist, Lab Technician, Pharmacist, Patient)
-- **Comprehensive Dashboards**: Customized dashboards for each role
-- **Patient Management**: Complete patient records and medical history
-- **Appointment Scheduling**: Book and manage appointments
-- **Department Management**: Organize hospital departments
-- **Clinic Management**: Manage different clinics and specializations
-- **Equipment Tracking**: Monitor medical equipment and maintenance
-- **Lab Tests**: Order and track laboratory tests
-- **Medical Records**: Maintain detailed patient medical records
-- **Prescription Management**: Create and track prescriptions
+نظام شامل لإدارة المستشفيات الكبرى مبني بأحدث التقنيات العالمية ويدعم اللغة العربية بالكامل مع التقويم الهجري ومواصفات المملكة العربية السعودية.
 
-## Tech Stack
+</div>
+
+A comprehensive world-class hospital management system built with modern technologies, featuring full Arabic language support, Hijri calendar integration, and Saudi Arabia-specific features.
+
+## 🌟 Core Features | المميزات الأساسية
+
+<div dir="rtl">
+
+### إدارة المستخدمين والصلاحيات
+- **18 دور وظيفي مختلف** مع صلاحيات محددة لكل دور
+- نظام صلاحيات متقدم (RBAC) لكل وحدة في النظام
+- إدارة كاملة للموظفين والمرضى
+- تتبع نشاط المستخدمين (Audit Logs)
+
+### الأدوار الوظيفية (18 Role):
+1. **مدير النظام** (Admin) - صلاحيات كاملة
+2. **مدير المستشفى** (Manager) - إدارة العمليات
+3. **طبيب** (Doctor) - الرعاية الطبية
+4. **ممرض/ممرضة** (Nurse) - رعاية المرضى
+5. **موظف استقبال** (Receptionist) - إدارة المواعيد
+6. **فني مختبر** (Lab Tech) - التحاليل الطبية
+7. **صيدلي** (Pharmacist) - إدارة الأدوية
+8. **أخصائي أشعة** (Radiologist) - الفحوصات الإشعاعية
+9. **جراح** (Surgeon) - العمليات الجراحية
+10. **طبيب تخدير** (Anesthesiologist) - التخدير
+11. **أخصائي تغذية** (Nutritionist) - التغذية العلاجية
+12. **أخصائي علاج طبيعي** (Physiotherapist) - العلاج الطبيعي
+13. **أخصائي نفسي** (Psychologist) - الصحة النفسية
+14. **محاسب** (Accountant) - الشؤون المالية
+15. **دعم فني** (IT Support) - الدعم التقني
+16. **أمن** (Security) - الأمن والحراسة
+17. **عامل نظافة** (Cleaner) - النظافة
+18. **مريض** (Patient) - بوابة المرضى
+
+</div>
+
+### Role-Based Access Control (RBAC)
+- **18 different user roles** with specific permissions
+- Advanced permission system for each module
+- Complete staff and patient management
+- Activity tracking and audit logs
+
+### Medical Specializations | التخصصات الطبية
+
+<div dir="rtl">
+
+- **30+ تخصص طبي** شامل جميع المجالات
+- أمراض القلب، الجهاز الهضمي، الأمراض العصبية، الأورام
+- جراحة العظام، الأنف والأذن والحنجرة، طب العيون
+- النساء والتوليد، طب الأطفال، حديثي الولادة
+- الطوارئ، العناية المركزة، التخدير
+- وجميع التخصصات الطبية الأخرى
+
+</div>
+
+- **30+ Medical Specializations** covering all fields
+- Cardiology, Gastroenterology, Neurology, Oncology
+- Orthopedics, ENT, Ophthalmology
+- Obstetrics & Gynecology, Pediatrics, Neonatology
+- Emergency Medicine, Intensive Care, Anesthesia
+- And all other medical specialties
+
+## 🏥 Complete Hospital Modules | الوحدات الكاملة
+
+<div dir="rtl">
+
+### 1. إدارة المرضى
+- سجلات طبية شاملة
+- تاريخ مرضي كامل
+- العلامات الحيوية
+- الحساسية والتطعيمات
+- فصائل الدم
+
+### 2. المواعيد والعيادات
+- حجز المواعيد
+- إدارة العيادات حسب التخصص
+- تذكير بالمواعيد
+- متابعة الحالات
+
+### 3. العمليات الجراحية
+- جدولة العمليات
+- غرف العمليات
+- فريق الجراحة والتخدير
+- متابعة ما بعد العملية
+
+### 4. المختبرات والأشعة
+- التحاليل الطبية
+- الأشعة (X-Ray, CT, MRI, Ultrasound)
+- النتائج والتقارير
+- التكامل مع الأجهزة الطبية
+
+### 5. الصيدلية
+- إدارة المخزون الدوائي
+- الوصفات الطبية
+- صرف الأدوية
+- تتبع الأدوية الخاضعة للرقابة
+- تواريخ الصلاحية
+
+### 6. الإدخال والأجنحة
+- إدخال المرضى
+- إدارة الأجنحة والغرف
+- الأسرّة المتاحة
+- العناية المركزة (ICU)
+- عناية الأطفال (NICU)
+- الولادة
+
+### 7. الطوارئ
+- استقبال حالات الطوارئ
+- تصنيف الحالات (Triage)
+- المتابعة الفورية
+- وحدة العناية المركزة
+
+### 8. الفواتير والتأمين
+- إصدار الفواتير
+- إدارة شركات التأمين
+- المطالبات التأمينية
+- المدفوعات (نقدي، مدى، Apple Pay، STC Pay)
+- التقارير المالية
+
+### 9. المشتريات والموردين
+- أوامر الشراء
+- إدارة الموردين
+- المخزون (أدوية، معدات، مستلزمات)
+- التقارير
+
+### 10. إدارة الموارد البشرية
+- الورديات (Shifts)
+- الرواتب
+- الإجازات
+- التقييمات
+
+</div>
+
+## 🇸🇦 Saudi Arabia Specific Features | مميزات خاصة بالمملكة
+
+<div dir="rtl">
+
+### الدعم الكامل للغة العربية
+- واجهة مستخدم بالعربية والإنجليزية
+- جميع المصطلحات الطبية بالعربي
+- أسماء التخصصات الطبية بالعربي
+- تقارير بالعربية
+
+### التقويم الهجري
+- عرض التواريخ بالهجري والميلادي
+- أرقام عربية هندية
+- أيام الأسبوع بالعربي
+
+### البيانات السعودية
+- جميع المدن السعودية
+- رقم الهوية الوطنية
+- رقم الإقامة (للمقيمين)
+- تنسيق أرقام الجوال السعودية (+966)
+- طرق الدفع المحلية (مدى، Apple Pay، STC Pay)
+- ضريبة القيمة المضافة 15%
+
+</div>
+
+### Full Arabic Language Support
+- Bilingual interface (Arabic/English)
+- Medical terms in Arabic
+- Medical specializations in Arabic
+- Arabic reports
+
+### Hijri Calendar Integration
+- Hijri and Gregorian date display
+- Arabic-Indic numerals
+- Arabic day names
+
+### Saudi Arabia Data
+- All Saudi cities
+- National ID validation
+- Iqama (residence) number validation
+- Saudi phone number formatting (+966)
+- Local payment methods (Mada, Apple Pay, STC Pay)
+- 15% VAT included
+
+## 🛠 Tech Stack | التقنيات المستخدمة
 
 ### Frontend
-- React 18
-- TypeScript
-- Vite
-- React Router 6
-- TailwindCSS 3
-- Radix UI Components
-- Recharts for data visualization
+- **React 18** - Modern UI framework
+- **TypeScript** - Type-safe development
+- **Vite** - Fast build tool
+- **React Router 6** - Client-side routing
+- **TailwindCSS 3** - Utility-first CSS
+- **Radix UI** - Accessible component library
+- **Recharts** - Data visualization
+- **React Hook Form** - Form management
+- **Zod** - Schema validation
 
 ### Backend
-- Express.js
-- Prisma ORM
-- PostgreSQL
-- JWT Authentication
-- Bcrypt password hashing
-- Zod validation
+- **Express.js 5** - Web framework
+- **Prisma ORM** - Database toolkit
+- **PostgreSQL** - Relational database
+- **JWT** - Authentication
+- **Bcrypt** - Password hashing
+- **Zod** - Request validation
+- **CORS** - Cross-origin support
+
+### Database Models (30+)
+- User, Role, Permission
+- Department, Clinic, Ward, Room
+- Appointment, Medical Record
+- Prescription, Medicine, Pharmacy Transaction
+- Lab Test, Imaging Study
+- Surgery, Admission
+- Vital Signs, Allergy, Vaccination
+- Emergency Case
+- Billing, Insurance, Insurance Claim
+- Equipment, Supplier, Purchase Order
+- Shift, Audit Log, Hospital Settings
 
 ## Getting Started
 
@@ -183,18 +367,161 @@ npm run db:migrate:prod
 - `POST /api/v1/medical-records` - Create medical record
 - `PATCH /api/v1/medical-records/:id` - Update medical record
 
+## 📊 Reports and Analytics | التقارير والتحليلات
+
+<div dir="rtl">
+
+### تقارير شاملة
+- تقارير المرضى والمواعيد
+- التقارير المالية والفواتير
+- تقارير المخزون والصيدلية
+- تقارير الموارد البشرية
+- الإحصائيات اليومية والشهرية
+- التصدير (PDF, Excel)
+
+</div>
+
+### Comprehensive Reports
+- Patient and appointment reports
+- Financial and billing reports
+- Inventory and pharmacy reports
+- HR reports
+- Daily and monthly statistics
+- Export capabilities (PDF, Excel)
+
+## 🔒 Security Features | الأمان
+
+<div dir="rtl">
+
+- تشفير كلمات المرور (Bcrypt)
+- مصادقة JWT
+- نظام صلاحيات متقدم (RBAC)
+- تسجيل جميع العمليات (Audit Logs)
+- حماية من CORS
+- حد المعدل (Rate Limiting)
+- التحقق من صحة البيانات (Validation)
+
+</div>
+
+- Password encryption (Bcrypt)
+- JWT authentication
+- Role-based access control (RBAC)
+- Complete audit logging
+- CORS protection
+- Rate limiting
+- Input validation
+
+## 🚀 Performance Features | الأداء
+
+- Fast development with Vite HMR
+- Optimized production builds
+- Database connection pooling
+- Efficient queries with Prisma
+- Lazy loading and code splitting
+- Responsive design for all devices
+
 ## Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run test` - Run tests
-- `npm run typecheck` - Run TypeScript type checking
-- `npm run db:migrate` - Run database migrations
-- `npm run db:migrate:prod` - Run migrations in production
-- `npm run db:seed` - Seed database with test data
-- `npm run db:studio` - Open Prisma Studio
+```bash
+npm run dev              # Start development server
+npm run build            # Build for production
+npm run start            # Start production server
+npm run test             # Run tests
+npm run typecheck        # Run TypeScript type checking
+npm run db:migrate       # Run database migrations
+npm run db:migrate:prod  # Run migrations in production
+npm run db:seed          # Seed database with test data
+npm run db:studio        # Open Prisma Studio
+```
 
-## License
+## 🌐 Deployment | النشر
 
-MIT
+<div dir="rtl">
+
+### متوافق مع:
+- Vercel
+- Netlify  
+- Railway
+- Render
+- AWS
+- Azure
+- Google Cloud
+
+</div>
+
+### Compatible with:
+- Vercel
+- Netlify
+- Railway
+- Render
+- AWS
+- Azure
+- Google Cloud
+
+## 📝 License
+
+MIT License - Free to use for commercial and personal projects
+
+## 🤝 Contributing | المساهمة
+
+<div dir="rtl">
+
+نرحب بجميع المساهمات! يرجى:
+1. عمل Fork للمشروع
+2. إنشاء فرع جديد (`git checkout -b feature/AmazingFeature`)
+3. Commit للتغييرات (`git commit -m 'Add some AmazingFeature'`)
+4. Push للفرع (`git push origin feature/AmazingFeature`)
+5. فتح Pull Request
+
+</div>
+
+Contributions are welcome! Please:
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📧 Contact | التواصل
+
+For support or inquiries, please open an issue on GitHub.
+
+## 🏆 Features Roadmap | خارطة الطريق
+
+<div dir="rtl">
+
+### قادم قريباً:
+- [ ] تطبيق الهاتف المحمول (React Native)
+- [ ] إشعارات فورية (Push Notifications)
+- [ ] نظام الرسائل الداخلية
+- [ ] التوقيع الإلكتروني للوصفات
+- [ ] التكامل مع أجهزة المختبر
+- [ ] نظام الملفات الطبية الإلكترونية (EMR)
+- [ ] التطبيب عن بُعد (Telemedicine)
+- [ ] الذكاء الاصطناعي للتشخيص
+- [ ] تحليلات متقدمة وBI
+- [ ] API عامة للتكامل
+
+</div>
+
+### Coming Soon:
+- [ ] Mobile app (React Native)
+- [ ] Push notifications
+- [ ] Internal messaging system
+- [ ] Electronic prescription signing
+- [ ] Lab equipment integration
+- [ ] Electronic Medical Records (EMR)
+- [ ] Telemedicine
+- [ ] AI-powered diagnostics
+- [ ] Advanced analytics and BI
+- [ ] Public API for integration
+
+---
+
+<div align="center" dir="rtl">
+
+**صُنع بـ ❤️ للمملكة العربية السعودية**
+
+Made with ❤️ for Saudi Arabia
+
+</div>
