@@ -12,28 +12,43 @@ datasource db {
 
 // Enums for role-based access control
 enum UserRole {
-  ADMIN
-  MANAGER
-  DOCTOR
-  NURSE
-  RECEPTIONIST
-  LAB_TECH
-  PHARMACIST
-  PATIENT
+  ADMIN              // مدير النظام
+  MANAGER            // مدير المستشفى
+  DOCTOR             // طبيب
+  NURSE              // ممرض/ممرضة
+  RECEPTIONIST       // موظف استقبال
+  LAB_TECH           // فني مختبر
+  PHARMACIST         // صيدلي
+  RADIOLOGIST        // أخصائي أشعة
+  SURGEON            // جراح
+  ANESTHESIOLOGIST   // طبيب تخدير
+  NUTRITIONIST       // أخصائي تغذية
+  PHYSIOTHERAPIST    // أخصائي علاج طبيعي
+  PSYCHOLOGIST       // أخصائي نفسي
+  ACCOUNTANT         // محاسب
+  IT_SUPPORT         // دعم فني
+  SECURITY           // أمن
+  CLEANER            // عامل نظافة
+  PATIENT            // مريض
 }
 
 enum AppointmentStatus {
   SCHEDULED
+  CONFIRMED
   IN_PROGRESS
   COMPLETED
   CANCELLED
   NO_SHOW
+  RESCHEDULED
 }
 
 enum PrescriptionStatus {
+  PENDING
   ACTIVE
+  DISPENSED
   COMPLETED
   CANCELLED
+  EXPIRED
 }
 
 enum BillingStatus {
@@ -41,6 +56,8 @@ enum BillingStatus {
   PAID
   PARTIALLY_PAID
   CANCELLED
+  REFUNDED
+  OVERDUE
 }
 
 enum ShiftStatus {
@@ -54,7 +71,57 @@ enum EquipmentStatus {
   AVAILABLE
   IN_USE
   MAINTENANCE
+  UNDER_REPAIR
   UNAVAILABLE
+  RETIRED
+}
+
+enum InsuranceStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  EXPIRED
+}
+
+enum AdmissionStatus {
+  ADMITTED
+  DISCHARGED
+  TRANSFERRED
+  DECEASED
+}
+
+enum BloodType {
+  A_POSITIVE
+  A_NEGATIVE
+  B_POSITIVE
+  B_NEGATIVE
+  AB_POSITIVE
+  AB_NEGATIVE
+  O_POSITIVE
+  O_NEGATIVE
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum EmergencyLevel {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  INSURANCE
+  BANK_TRANSFER
+  MADA
+  APPLE_PAY
+  STC_PAY
 }
 
 // User model with authentication fields
@@ -63,20 +130,42 @@ model User {
   email                 String        @unique
   password              String
   firstName             String
+  firstNameAr           String?       // الاسم الأول بالعربي
   lastName              String
+  lastNameAr            String?       // اسم العائلة بالعربي
   phoneNumber           String?
+  alternativePhone      String?
   dateOfBirth           DateTime?
-  gender                String?
+  gender                Gender?
+  bloodType             BloodType?
+  nationalId            String?       @unique // رقم الهوية الوطنية/الإقامة
+  passportNumber        String?
+  nationality           String?       @default("Saudi Arabia")
   address               String?
+  addressAr             String?       // العنوان بالعربي
   city                  String?
+  cityAr                String?       // المدينة بالعربي
   postalCode            String?
+  emergencyContact      String?
+  emergencyPhone        String?
   role                  UserRole      @default(PATIENT)
   departmentId          String?
   department            Department?   @relation("DepartmentStaff", fields: [departmentId], references: [id])
+  specialization        String?       // تخصص الطبيب
+  licenseNumber         String?       // رقم الترخيص المهني
+  licenseExpiry         DateTime?
+  qualifications        String?       // المؤهلات العلمية
+  yearsOfExperience     Int?
+  languages             String?       // اللغات (JSON array)
+  bio                   String?
+  bioAr                 String?       // السيرة الذاتية بالعربي
+  profileImage          String?
+  salary                Decimal?
   isActive              Boolean       @default(true)
   lastLogin             DateTime?
   createdAt             DateTime      @default(now())
   updatedAt             DateTime      @updatedAt
+  createdBy             String?
 
   // Relations
   appointments          Appointment[]
@@ -88,14 +177,24 @@ model User {
   labTests              LabTest[]
   imagingStudies        ImagingStudy[]
   billings              Billing[]
-  createdBy             String?
+  insurances            Insurance[]
+  admissions            Admission[]
+  surgeries             Surgery[]     @relation("PatientSurgeries")
+  surgeriesAsDoctor     Surgery[]     @relation("DoctorSurgeries")
+  vitals                VitalSigns[]
+  allergies             Allergy[]
+  vaccinations          Vaccination[]
+  emergencyCases        EmergencyCase[]
   
   // Many-to-many relations
   clinics               Clinic[]      @relation("ClinicDoctors")
+  permissions           Permission[]  @relation("UserPermissions")
 
   @@index([email])
   @@index([role])
   @@index([departmentId])
+  @@index([nationalId])
+  @@index([specialization])
 }
 
 // Role model for RBAC
@@ -377,4 +476,450 @@ model AuditLog {
 
   @@index([userId])
   @@index([createdAt])
+}
+
+// Permission Management
+model Permission {
+  id                    String        @id @default(cuid())
+  name                  String        @unique
+  description           String?
+  descriptionAr         String?
+  module                String        // e.g., "appointments", "patients", "billing"
+  actions               String        // JSON array: ["create", "read", "update", "delete"]
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  
+  users                 User[]        @relation("UserPermissions")
+  
+  @@index([module])
+}
+
+// Insurance Companies
+model InsuranceCompany {
+  id                    String        @id @default(cuid())
+  name                  String        @unique
+  nameAr                String?
+  code                  String        @unique
+  phone                 String?
+  email                 String?
+  address               String?
+  website               String?
+  contactPerson         String?
+  isActive              Boolean       @default(true)
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  
+  insurances            Insurance[]
+  
+  @@index([name])
+  @@index([code])
+}
+
+// Patient Insurance
+model Insurance {
+  id                    String        @id @default(cuid())
+  patientId             String
+  patient               User          @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  companyId             String
+  company               InsuranceCompany @relation(fields: [companyId], references: [id])
+  policyNumber          String
+  groupNumber           String?
+  coverageType          String        // e.g., "Full", "Partial", "Emergency Only"
+  coveragePercentage    Int           @default(100)
+  startDate             DateTime
+  endDate               DateTime
+  status                InsuranceStatus @default(PENDING)
+  notes                 String?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  
+  claims                InsuranceClaim[]
+  
+  @@index([patientId])
+  @@index([companyId])
+  @@index([policyNumber])
+  @@index([status])
+}
+
+// Insurance Claims
+model InsuranceClaim {
+  id                    String        @id @default(cuid())
+  insuranceId           String
+  insurance             Insurance     @relation(fields: [insuranceId], references: [id])
+  claimNumber           String        @unique
+  claimDate             DateTime      @default(now())
+  amount                Decimal
+  approvedAmount        Decimal       @default(0)
+  status                InsuranceStatus @default(PENDING)
+  diagnosis             String?
+  treatment             String?
+  notes                 String?
+  submittedDate         DateTime?
+  processedDate         DateTime?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  
+  @@index([insuranceId])
+  @@index([claimNumber])
+  @@index([status])
+}
+
+// Hospital Admissions / إدخال المرضى
+model Admission {
+  id                    String        @id @default(cuid())
+  patientId             String
+  patient               User          @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  admissionNumber       String        @unique
+  admissionDate         DateTime      @default(now())
+  dischargeDate         DateTime?
+  roomNumber            String?
+  bedNumber             String?
+  wardId                String?
+  ward                  Ward?         @relation(fields: [wardId], references: [id])
+  admittingDiagnosis    String
+  dischargeDiagnosis    String?
+  status                AdmissionStatus @default(ADMITTED)
+  admissionType         String        // "Emergency", "Scheduled", "Transfer"
+  referringDoctor       String?
+  attendingDoctor       String?
+  notes                 String?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  
+  @@index([patientId])
+  @@index([admissionNumber])
+  @@index([wardId])
+  @@index([status])
+}
+
+// Ward / الأجنحة
+model Ward {
+  id                    String        @id @default(cuid())
+  name                  String        @unique
+  nameAr                String?
+  wardType              String        // "General", "ICU", "NICU", "Maternity", etc.
+  floor                 Int
+  totalBeds             Int
+  availableBeds         Int
+  isActive              Boolean       @default(true)
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  
+  admissions            Admission[]
+  rooms                 Room[]
+  
+  @@index([wardType])
+}
+
+// Rooms / الغرف
+model Room {
+  id                    String        @id @default(cuid())
+  roomNumber            String        @unique
+  wardId                String
+  ward                  Ward          @relation(fields: [wardId], references: [id], onDelete: Cascade)
+  roomType              String        // "Single", "Double", "Ward", "VIP"
+  totalBeds             Int
+  occupiedBeds          Int           @default(0)
+  pricePerDay           Decimal
+  hasOxygen             Boolean       @default(false)
+  hasMonitor            Boolean       @default(false)
+  isAvailable           Boolean       @default(true)
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  
+  @@index([wardId])
+  @@index([roomType])
+}
+
+// Surgery / العمليات الجراحية
+model Surgery {
+  id                    String        @id @default(cuid())
+  patientId             String
+  patient               User          @relation("PatientSurgeries", fields: [patientId], references: [id], onDelete: Cascade)
+  surgeonId             String
+  surgeon               User          @relation("DoctorSurgeries", fields: [surgeonId], references: [id], onDelete: Restrict)
+  surgeryType           String
+  surgeryDate           DateTime
+  startTime             DateTime
+  endTime               DateTime?
+  operatingRoom         String?
+  anesthesiaType        String?
+  anesthesiologistName  String?
+  diagnosis             String
+  procedure             String
+  complications         String?
+  outcome               String?
+  notes                 String?
+  status                String        @default("SCHEDULED")
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  
+  @@index([patientId])
+  @@index([surgeonId])
+  @@index([surgeryDate])
+  @@index([status])
+}
+
+// Vital Signs / العلامات الحيوية
+model VitalSigns {
+  id                    String        @id @default(cuid())
+  patientId             String
+  patient               User          @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  temperature           Decimal?      // Celsius
+  bloodPressureSystolic Int?
+  bloodPressureDiastolic Int?
+  heartRate             Int?          // beats per minute
+  respiratoryRate       Int?          // breaths per minute
+  oxygenSaturation      Int?          // percentage
+  weight                Decimal?      // kg
+  height                Decimal?      // cm
+  bmi                   Decimal?
+  notes                 String?
+  recordedAt            DateTime      @default(now())
+  recordedBy            String?
+  createdAt             DateTime      @default(now())
+  
+  @@index([patientId])
+  @@index([recordedAt])
+}
+
+// Allergies / الحساسية
+model Allergy {
+  id                    String        @id @default(cuid())
+  patientId             String
+  patient               User          @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  allergen              String
+  allergyType           String        // "Drug", "Food", "Environmental"
+  severity              String        // "Mild", "Moderate", "Severe"
+  reaction              String
+  notes                 String?
+  diagnosedDate         DateTime?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  
+  @@index([patientId])
+  @@index([allergyType])
+}
+
+// Vaccinations / التطعيمات
+model Vaccination {
+  id                    String        @id @default(cuid())
+  patientId             String
+  patient               User          @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  vaccineName           String
+  vaccineCode           String?
+  manufacturer          String?
+  batchNumber           String?
+  doseNumber            Int
+  administeredDate      DateTime
+  expiryDate            DateTime?
+  administeredBy        String?
+  site                  String?       // Injection site
+  nextDueDate           DateTime?
+  notes                 String?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  
+  @@index([patientId])
+  @@index([vaccineName])
+  @@index([administeredDate])
+}
+
+// Emergency Cases / حالات الطوارئ
+model EmergencyCase {
+  id                    String        @id @default(cuid())
+  patientId             String
+  patient               User          @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  caseNumber            String        @unique
+  arrivalDate           DateTime      @default(now())
+  arrivalMode           String        // "Ambulance", "Walk-in", "Police", "Other"
+  chiefComplaint        String
+  triageLevel           EmergencyLevel
+  triageNotes           String?
+  vitalSigns            String?       // JSON
+  treatment             String?
+  disposition           String?       // "Admitted", "Discharged", "Transferred", "Deceased"
+  attendingDoctor       String?
+  status                String        @default("ACTIVE")
+  resolvedAt            DateTime?
+  notes                 String?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  
+  @@index([patientId])
+  @@index([caseNumber])
+  @@index([triageLevel])
+  @@index([status])
+}
+
+// Pharmacy Inventory / مخزون الصيدلية
+model Medicine {
+  id                    String        @id @default(cuid())
+  name                  String
+  nameAr                String?
+  genericName           String?
+  brandName             String?
+  medicineCode          String        @unique
+  barcode               String?
+  category              String        // "Antibiotic", "Painkiller", etc.
+  dosageForm            String        // "Tablet", "Capsule", "Syrup", etc.
+  strength              String        // e.g., "500mg"
+  manufacturer          String?
+  supplier              String?
+  unitPrice             Decimal
+  reorderLevel          Int           @default(50)
+  quantityInStock       Int           @default(0)
+  location              String?       // Storage location
+  requiresPrescription  Boolean       @default(true)
+  isControlled          Boolean       @default(false)
+  expiryDate            DateTime?
+  isActive              Boolean       @default(true)
+  description           String?
+  sideEffects           String?
+  contraindications     String?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  
+  transactions          PharmacyTransaction[]
+  
+  @@index([name])
+  @@index([medicineCode])
+  @@index([category])
+}
+
+// Pharmacy Transactions
+model PharmacyTransaction {
+  id                    String        @id @default(cuid())
+  medicineId            String
+  medicine              Medicine      @relation(fields: [medicineId], references: [id])
+  transactionType       String        // "IN", "OUT", "ADJUSTMENT", "RETURN"
+  quantity              Int
+  unitPrice             Decimal?
+  totalAmount           Decimal?
+  prescriptionId        String?
+  patientId             String?
+  dispensedBy           String?
+  notes                 String?
+  transactionDate       DateTime      @default(now())
+  createdAt             DateTime      @default(now())
+  
+  @@index([medicineId])
+  @@index([transactionType])
+  @@index([transactionDate])
+}
+
+// Suppliers / الموردين
+model Supplier {
+  id                    String        @id @default(cuid())
+  name                  String        @unique
+  nameAr                String?
+  code                  String        @unique
+  category              String        // "Medicine", "Equipment", "Supplies"
+  contactPerson         String?
+  phone                 String?
+  email                 String?
+  address               String?
+  taxNumber             String?
+  bankAccount           String?
+  paymentTerms          String?
+  isActive              Boolean       @default(true)
+  rating                Int?          @default(5)
+  notes                 String?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  
+  purchaseOrders        PurchaseOrder[]
+  
+  @@index([name])
+  @@index([code])
+  @@index([category])
+}
+
+// Purchase Orders / أوامر الشراء
+model PurchaseOrder {
+  id                    String        @id @default(cuid())
+  orderNumber           String        @unique
+  supplierId            String
+  supplier              Supplier      @relation(fields: [supplierId], references: [id])
+  orderDate             DateTime      @default(now())
+  expectedDelivery      DateTime?
+  actualDelivery        DateTime?
+  status                String        @default("PENDING")
+  subtotal              Decimal
+  tax                   Decimal       @default(0)
+  discount              Decimal       @default(0)
+  totalAmount           Decimal
+  paymentStatus         String        @default("PENDING")
+  notes                 String?
+  createdBy             String?
+  approvedBy            String?
+  approvedAt            DateTime?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  
+  items                 PurchaseOrderItem[]
+  
+  @@index([supplierId])
+  @@index([orderNumber])
+  @@index([status])
+}
+
+// Purchase Order Items
+model PurchaseOrderItem {
+  id                    String        @id @default(cuid())
+  orderId               String
+  order                 PurchaseOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  itemName              String
+  itemCode              String?
+  quantity              Int
+  unitPrice             Decimal
+  totalPrice            Decimal
+  receivedQuantity      Int           @default(0)
+  notes                 String?
+  createdAt             DateTime      @default(now())
+  
+  @@index([orderId])
+}
+
+// Appointments Statistics / إحصائيات المواعيد
+model AppointmentStats {
+  id                    String        @id @default(cuid())
+  date                  DateTime      @unique @default(now())
+  totalAppointments     Int           @default(0)
+  completedAppointments Int           @default(0)
+  cancelledAppointments Int           @default(0)
+  noShowAppointments    Int           @default(0)
+  averageWaitTime       Int?          // minutes
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  
+  @@index([date])
+}
+
+// Hospital Settings / إعدادات المستشفى
+model HospitalSettings {
+  id                    String        @id @default(cuid())
+  hospitalName          String
+  hospitalNameAr        String?
+  hospitalCode          String        @unique
+  licenseNumber         String?
+  phone                 String?
+  email                 String?
+  website               String?
+  address               String?
+  addressAr             String?
+  city                  String?
+  country               String        @default("Saudi Arabia")
+  currency              String        @default("SAR")
+  timezone              String        @default("Asia/Riyadh")
+  language              String        @default("ar")
+  logo                  String?
+  workingHoursStart     String?       // "08:00"
+  workingHoursEnd       String?       // "20:00"
+  emergencyPhone        String?
+  taxNumber             String?
+  taxRate               Decimal       @default(15)
+  appointmentDuration   Int           @default(30) // minutes
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
 }
